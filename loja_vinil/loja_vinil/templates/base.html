@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Loja de Vinis{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-blue-600 text-white py-4 shadow">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-xl font-bold">Loja de Vinis</h1>
+            <nav>
+                <a href="{{ url_for('index') }}" class="px-4 hover:underline">Home</a>
+                <a href="{{ url_for('listar_vinis') }}" class="px-4 hover:underline">Vinis</a>
+                <a href="{{ url_for('listar_clientes') }}" class="px-4 hover:underline">Clientes</a>
+                <a href="{{ url_for('listar_vendas') }}" class="px-4 hover:underline">Vendas</a>
+            </nav>
+        </div>
+    </header>
+    <main class="flex-grow container mx-auto py-8 px-4">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-gray-800 text-gray-300 py-4 text-center text-sm">
+        &copy; {{ year }} Loja de Vinis - Todos os direitos reservados.
+    </footer>
+</body>
+</html>

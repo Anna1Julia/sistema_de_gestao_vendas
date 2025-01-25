@@ -1,0 +1,87 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9fafb;
+    margin: 0;
+    padding: 0;
+    animation: fadeIn 0.5s ease-in;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.button-blue {
+    background-color: #2563eb;
+    color: white;
+}
+.button-red {
+    background-color: #dc2626;
+    color: white;
+}
+.button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.clientes-table th,
+.clientes-table td {
+    padding: 0.75rem;
+}
+.clientes-table th {
+    background-color: #f3f4f6; 
+}
+.clientes-table td {
+    border-top: 1px solid #e5e7eb; 
+}
+
+.vendas-table th {
+    font-size: 0.875rem;
+    background-color: #dbeafe; 
+}
+.vendas-table td {
+    padding: 0.5rem;
+}
+
+.form-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.form-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #374151; 
+}
+.form-container input,
+.form-container select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+}
+.form-container button {
+    padding: 0.75rem 1.5rem;
+    background-color: #2563eb;  
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+.form-container button:hover {
+    background-color: #1d4ed8; 
+}

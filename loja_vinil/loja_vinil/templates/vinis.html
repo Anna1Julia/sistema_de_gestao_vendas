@@ -1,0 +1,41 @@
+
+{% extends 'base.html' %}
+{% block title %}Vinis{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Listagem de Vinis</h2>
+<form method="get" class="mb-4 flex space-x-2">
+    <select name="genero" class="border px-2 py-1">
+        <option value="">Todos os Gêneros</option>
+        {% for genero in generos %}
+        <option value="{{ genero.id }}">{{ genero.nome }}</option>
+        {% endfor %}
+    </select>
+    <input type="number" name="preco_min" placeholder="Preço Min" class="border px-2 py-1">
+    <input type="number" name="preco_max" placeholder="Preço Max" class="border px-2 py-1">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-1">Filtrar</button>
+</form>
+<table class="table-auto w-full bg-white rounded shadow">
+    <thead class="bg-gray-200">
+        <tr>
+            <th class="px-4 py-2">Título</th>
+            <th class="px-4 py-2">Gênero</th>
+            <th class="px-4 py-2">Preço</th>
+            <th class="px-4 py-2">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vinil in vinis %}
+        <tr class="border-t">
+            <td class="px-4 py-2">{{ vinil.titulo }}</td>
+            <td class="px-4 py-2">{{ vinil.genero.nome }}</td>
+            <td class="px-4 py-2">R$ {{ vinil.preco }}</td>
+            <td class="px-4 py-2">
+                <form action="{{ url_for('deletar_vinil', id=vinil.id) }}" method="post">
+                    <button type="submit" class="bg-red-600 text-white px-2 py-1">Deletar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

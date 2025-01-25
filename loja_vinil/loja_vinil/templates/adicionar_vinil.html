@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Adicionar Vinil{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Adicionar Novo Vinil</h2>
+<form action="{{ url_for('adicionar_vinil') }}" method="post" class="bg-white p-6 rounded shadow form-container">
+    <div class="mb-4">
+        <label for="titulo" class="block text-gray-700">Título</label>
+        <input type="text" name="titulo" id="titulo" class="w-full border px-3 py-2" required>
+    </div>
+    <div class="mb-4">
+        <label for="genero_id" class="block text-gray-700">Gênero</label>
+        <select name="genero_id" id="genero_id" class="w-full border px-3 py-2">
+            {% for genero in generos %}
+            <option value="{{ genero.id }}">{{ genero.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-4">
+        <label for="preco" class="block text-gray-700">Preço</label>
+        <input type="number" step="0.01" name="preco" id="preco" class="w-full border px-3 py-2" required>
+    </div>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Adicionar</button>
+</form>
+{% endblock %}
