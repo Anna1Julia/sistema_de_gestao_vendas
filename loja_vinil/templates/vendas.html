@@ -2,12 +2,23 @@
 {% block title %}Vendas{% endblock %}
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Listagem de Vendas</h2>
+
+<form action="{{ url_for('adicionar_venda') }}" method="get" class="mb-4">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded flex items-center">
+        <span class="mr-2">Adicionar Venda</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+    </button>
+</form>
+
 <table class="table-auto w-full bg-white rounded shadow vendas-table">
     <thead class="bg-gray-200">
         <tr>
             <th class="px-4 py-2">Cliente</th>
             <th class="px-4 py-2">Vinil(s)</th>
             <th class="px-4 py-2">Data</th>
+            <th class="px-4 py-2">Valor Total</th>
             <th class="px-4 py-2">Ações</th>
         </tr>
     </thead>
@@ -16,11 +27,12 @@
         <tr class="border-t">
             <td class="px-4 py-2">{{ venda.cliente.nome }}</td>
             <td class="px-4 py-2">
-                {% for vinil in venda.vinis %}
-                {{ vinil.titulo }}{% if not loop.last %}, {% endif %}
+                {% for item in venda.itens_venda %}
+                {{ item.vinil.titulo }} ({{ item.quantidade }}x) - R$ {{ item.preco_unitario }}{% if not loop.last %}, {% endif %}
                 {% endfor %}
             </td>
             <td class="px-4 py-2">{{ venda.data }}</td>
+            <td class="px-4 py-2">R$ {{ venda.valor_total }}</td>
             <td class="px-4 py-2">
                 <form action="{{ url_for('deletar_venda', id=venda.id) }}" method="post">
                     <button type="submit" class="bg-red-600 text-white px-2 py-1">Deletar</button>

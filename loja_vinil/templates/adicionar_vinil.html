@@ -2,23 +2,42 @@
 {% block title %}Adicionar Vinil{% endblock %}
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Adicionar Novo Vinil</h2>
-<form action="{{ url_for('adicionar_vinil') }}" method="post" class="bg-white p-6 rounded shadow form-container">
+<form method="post" action="{{ url_for('adicionar_vinil') }}" class="bg-white shadow rounded-lg p-4">
     <div class="mb-4">
-        <label for="titulo" class="block text-gray-700">Título</label>
-        <input type="text" name="titulo" id="titulo" class="w-full border px-3 py-2" required>
+        <label for="titulo" class="block mb-2 font-medium">Título:</label>
+        <input type="text" id="titulo" name="titulo" required class="w-full border px-3 py-2 rounded">
     </div>
+
     <div class="mb-4">
-        <label for="genero_id" class="block text-gray-700">Gênero</label>
-        <select name="genero_id" id="genero_id" class="w-full border px-3 py-2">
+        <label for="artista" class="block mb-2 font-medium">Artista:</label>
+        <input type="text" id="artista" name="artista" required class="w-full border px-3 py-2 rounded">
+    </div>
+
+    <div class="mb-4">
+        <label for="ano_lancamento" class="block mb-2 font-medium">Ano de Lançamento:</label>
+        <input type="number" id="ano_lancamento" name="ano_lancamento" class="w-full border px-3 py-2 rounded">
+    </div>
+
+    <div class="mb-4">
+        <label for="genero" class="block mb-2 font-medium">Gênero:</label>
+        <select id="genero" name="genero_id" required class="w-full border px-3 py-2 rounded">
             {% for genero in generos %}
-            <option value="{{ genero.id }}">{{ genero.nome }}</option>
+            <option value="{{ genero.IDGeneroMusical }}">{{ genero.Nome }}</option>
             {% endfor %}
         </select>
     </div>
+
     <div class="mb-4">
-        <label for="preco" class="block text-gray-700">Preço</label>
-        <input type="number" step="0.01" name="preco" id="preco" class="w-full border px-3 py-2" required>
+        <label for="preco" class="block mb-2 font-medium">Preço:</label>
+        <input type="number" step="0.01" id="preco" name="preco" required class="w-full border px-3 py-2 rounded">
     </div>
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Adicionar</button>
+
+    <div class="mb-4">
+        <label for="estoque" class="block mb-2 font-medium">Estoque:</label>
+        <input type="number" id="estoque" name="estoque" required class="w-full border px-3 py-2 rounded">
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Salvar</button>
+    <a href="{{ url_for('listar_vinis') }}" class="ml-4 text-blue-600 hover:underline">Cancelar</a>
 </form>
 {% endblock %}

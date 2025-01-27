@@ -1,12 +1,14 @@
-from . import db
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+from models import db
 
 class GeneroMusical(db.Model):
     __tablename__ = 'GeneroMusical'
 
-    IDGeneroMusical = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Nome = db.Column(db.String(100), nullable=False)
+    IDGeneroMusical = Column(Integer, primary_key=True, autoincrement=True)
+    Nome = Column(String(100), nullable=False, unique=True)
 
-    vinis = db.relationship('Vinil', backref='genero', lazy=True)
+    vinis = relationship('Vinil', backref='genero_musical', lazy='dynamic')
 
     def __repr__(self):
         return f"<GeneroMusical {self.Nome}>"

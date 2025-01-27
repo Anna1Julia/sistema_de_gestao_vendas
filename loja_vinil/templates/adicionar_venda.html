@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Adicionar Venda{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Adicionar Nova Venda</h2>
+<form method="post" action="{{ url_for('adicionar_venda') }}" class="bg-white shadow rounded-lg p-4">
+    <div class="mb-4">
+        <label for="cliente_id" class="block mb-2 font-medium">Cliente:</label>
+        <select id="cliente_id" name="cliente_id" required class="w-full border px-3 py-2 rounded">
+            {% for cliente in clientes %}
+                <option value="{{ cliente.IDCliente }}">{{ cliente.Nome }}</option>
+            {% endfor %}
+        </select>     
+    </div>
+
+    <div class="mb-4" id="vinis-container">
+        <label for="vinis" class="block mb-2 font-medium">Vinil(s):</label>
+        <div class="vinil-item mb-4 flex items-center" id="vinil-1">
+            <select name="vinis[]" required class="w-full border px-3 py-2 rounded vinil-select">
+                <option value="">Selecione um vinil</option>
+                {% for vinil in vinis %}
+                    <option value="{{ vinil.id }}" data-estoque="{{ vinil.Estoque }}">{{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="quantidades[]" min="1" max="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="1">
+            <button type="button" class="ml-2 text-red-600 remove-vinil">Remover</button>
+        </div>
+    </div>
+
+    <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded" id="add-vinil">Adicionar Vinil</button>
+
+    <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded mt-4">Salvar</button>
+    <a href="{{ url_for('listar_vendas') }}" class="ml-4 text-blue-600 hover:underline">Cancelar</a>
+</form>
+
+<script>
+    let vinilCount = 1;  // Contador de vinis no formulário
+
+    document.getElementById('add-vinil').addEventListener('click', function() {
+        vinilCount++;
+        
+        const vinilContainer = document.createElement('div');
+        vinilContainer.classList.add('vinil-item', 'mb-4', 'flex', 'items-center');
+        vinilContainer.id = `vinil-${vinilCount}`;
+        
+        vinilContainer.innerHTML = `
+            <select name="vinis[]" required class="w-full border px-3 py-2 rounded vinil-select">
+                <option value="">Selecione um vinil</option>
+                {% for vinil in vinis %}
+                    <option value="{{ vinil.id }}" data-estoque="{{ vinil.Estoque }}">{{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="quantidades[]" min="1" max="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="${vinilCount}">
+            <button type="button" class="ml-2 text-red-600 remove-vinil">Remover</button>
+        `;
+        
+        document.getElementById('vinis-container').appendChild(vinilContainer);
+    });
+
+    document.addEventListener('click', function(event) {
+        if (event.target && event.target.classList.contains('remove-vinil')) {
+            const vinilItem = event.target.closest('.vinil-item');
+            vinilItem.remove();
+        }
+    });
+
+    document.addEventListener('change', function(event) {
+        if (event.target && event.target.classList.contains('vinil-select')) {
+            const vinilSelect = event.target;
+            const estoque = vinilSelect.options[vinilSelect.selectedIndex].getAttribute('data-estoque');
+            const quantityInput = vinilSelect.closest('.vinil-item').querySelector('.quantity-input');
+            quantityInput.setAttribute('max', estoque);
+            quantityInput.value = 1;
+        }
+    });
+</script>
+
+{% endblock %}

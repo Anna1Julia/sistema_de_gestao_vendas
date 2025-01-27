@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,14 +14,31 @@
             <nav>
                 <a href="{{ url_for('index') }}" class="px-4 hover:underline">Home</a>
                 <a href="{{ url_for('listar_vinis') }}" class="px-4 hover:underline">Vinis</a>
+                <a href="{{ url_for('listar_generos') }}" class="px-4 hover:underline">Gêneros</a>
                 <a href="{{ url_for('listar_clientes') }}" class="px-4 hover:underline">Clientes</a>
                 <a href="{{ url_for('listar_vendas') }}" class="px-4 hover:underline">Vendas</a>
-            </nav>
+            </nav>            
         </div>
     </header>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="fixed top-0 inset-x-0 p-4">
+                <div class="container mx-auto">
+                    {% for category, message in messages %}
+                        <div class="bg-{{ 'green' if category == 'success' else 'red' }}-500 text-white p-4 rounded-lg mb-4">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <main class="flex-grow container mx-auto py-8 px-4">
         {% block content %}{% endblock %}
     </main>
+
     <footer class="bg-gray-800 text-gray-300 py-4 text-center text-sm">
         &copy; {{ year }} Loja de Vinis - Todos os direitos reservados.
     </footer>

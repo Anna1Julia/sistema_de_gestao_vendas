@@ -1,17 +1,20 @@
-from . import db
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
+from models import db
 
 class Vinil(db.Model):
     __tablename__ = 'Vinil'
 
-    IDVinil = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Titulo = db.Column(db.String(255), nullable=False)
-    Artista = db.Column(db.String(255), nullable=False)
-    AnoLancamento = db.Column(db.Integer)
-    Preco = db.Column(db.Numeric(10, 2), nullable=False)
-    Estoque = db.Column(db.Integer, nullable=False)
-    IDGeneroMusical = db.Column(db.Integer, db.ForeignKey('GeneroMusical.IDGeneroMusical'), nullable=True)
+    IDVinil = Column(Integer, primary_key=True, autoincrement=True)
+    Titulo = Column(String(100), nullable=False)
+    Artista = Column(String(100), nullable=False)
+    AnoLancamento = Column(Integer, nullable=True)
+    Preco = Column(Float, nullable=True)
+    Estoque = Column(Integer, nullable=False, default=0)
+    IDGeneroMusical = Column(Integer, ForeignKey('GeneroMusical.IDGeneroMusical'), nullable=False)
 
-    itens_venda = db.relationship('ItensVenda', backref='vinil_rel', lazy=True)
+    # Relacionamento com GeneroMusical
+    genero = relationship('GeneroMusical', backref='generos_vinil')
 
     def __repr__(self):
         return f"<Vinil {self.Titulo} - {self.Artista} - R$ {self.Preco}>"

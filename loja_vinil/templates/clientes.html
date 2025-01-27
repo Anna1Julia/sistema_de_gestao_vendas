@@ -2,26 +2,42 @@
 {% block title %}Clientes{% endblock %}
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Listagem de Clientes</h2>
+
+<form action="{{ url_for('adicionar_cliente') }}" method="get" class="inline-flex items-center mb-4">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded flex items-center">
+        <span class="mr-2">Adicionar Cliente</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+    </button>
+</form>
+
 <table class="table-auto w-full bg-white rounded shadow">
     <thead class="bg-gray-200">
         <tr>
             <th class="px-4 py-2">Nome</th>
             <th class="px-4 py-2">Email</th>
             <th class="px-4 py-2">Telefone</th>
+            <th class="px-4 py-2">Endereço</th>
             <th class="px-4 py-2">Ações</th>
         </tr>
     </thead>
     <tbody>
         {% for cliente in clientes %}
         <tr class="border-t">
-            <td class="px-4 py-2">{{ cliente.nome }}</td>
-            <td class="px-4 py-2">{{ cliente.email }}</td>
-            <td class="px-4 py-2">{{ cliente.telefone }}</td>
+            <td class="px-4 py-2">{{ cliente.Nome }}</td>
+            <td class="px-4 py-2">{{ cliente.Email }}</td>
+            <td class="px-4 py-2">{{ cliente.Telefone }}</td>
+            <td class="px-4 py-2">{{ cliente.Endereco }}</td>
             <td class="px-4 py-2">
-                <form action="{{ url_for('deletar_cliente', id=cliente.id) }}" method="post">
+                <form action="{{ url_for('deletar_cliente', id=cliente.IDCliente) }}" method="post">
                     <button type="submit" class="bg-red-600 text-white px-2 py-1">Deletar</button>
-                </form>
+                </form>                
             </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5" class="text-center px-4 py-2">Nenhum cliente encontrado.</td>
         </tr>
         {% endfor %}
     </tbody>
