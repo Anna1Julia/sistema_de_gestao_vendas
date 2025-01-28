@@ -12,9 +12,6 @@
     </button>
 </form>
 
-<br>
-<br>
-
 <form method="get" class="mb-4 flex space-x-2">
     <select name="genero" class="border px-2 py-1">
         <option value="">Todos os Gêneros</option>
@@ -55,9 +52,12 @@
             <td class="px-4 py-2">{{ vinil.genero.Nome }}</td>
             <td class="px-4 py-2">R$ {{ vinil.Preco }}</td>
             <td class="px-4 py-2">{{ vinil.Estoque }}</td>
-            <td class="px-4 py-2">
+            <td class="px-4 py-2 flex space-x-2">
+                <form action="{{ url_for('editar_vinil', id=vinil.IDVinil) }}" method="get">
+                    <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded">Editar</button>
+                </form>
                 <form action="{{ url_for('deletar_vinil', id=vinil.IDVinil) }}" method="post">
-                    <button type="submit" class="bg-red-600 text-white px-2 py-1">Deletar</button>
+                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded" onclick="return confirm('Tem certeza que deseja excluir este vinil?')">Deletar</button>
                 </form>
             </td>
         </tr>
@@ -68,5 +68,4 @@
         {% endfor %}
     </tbody>
 </table>
-
 {% endblock %}

@@ -13,7 +13,6 @@ class Vinil(db.Model):
     Estoque = Column(Integer, nullable=False, default=0)
     IDGeneroMusical = Column(Integer, ForeignKey('GeneroMusical.IDGeneroMusical'), nullable=False)
 
-    # Relacionamento com GeneroMusical
     genero = relationship('GeneroMusical', backref='generos_vinil')
 
     def __repr__(self):

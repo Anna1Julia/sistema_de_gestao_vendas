@@ -41,16 +41,6 @@ def listar_vinis():
     generos = GeneroMusical.query.all()
     return render_template('vinis.html', vinis=vinis, generos=generos)
 
-@app.route('/clientes')
-def listar_clientes():
-    clientes = Cliente.query.all()
-    return render_template('clientes.html', clientes=clientes)
-
-@app.route('/vendas')
-def listar_vendas():
-    vendas = Venda.query.all()
-    return render_template('vendas.html', vendas=vendas)
-
 @app.route('/adicionar_vinil', methods=['GET', 'POST'])
 def adicionar_vinil():
     generos = GeneroMusical.query.all()
@@ -77,12 +67,46 @@ def adicionar_vinil():
 
     return render_template('adicionar_vinil.html', generos=generos)
 
+@app.route('/vinil/editar/<int:id>', methods=['GET', 'POST'])
+def editar_vinil(id):
+    vinil = Vinil.query.get_or_404(id)
+    generos = GeneroMusical.query.all()
+
+    if request.method == 'POST':
+        vinil.Titulo = request.form['titulo']
+        vinil.Artista = request.form['artista']
+        vinil.AnoLancamento = request.form['ano_lancamento']
+        vinil.Preco = request.form['preco']
+        vinil.Estoque = request.form['estoque']
+        vinil.IDGeneroMusical = request.form['genero_id']
+
+        try:
+            db.session.commit()
+            flash('Vinil atualizado com sucesso!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao atualizar vinil: {str(e)}', 'error')
+
+        return redirect(url_for('listar_vinis'))
+
+    return render_template(
+        'editar_vinil.html', 
+        vinil=vinil, 
+        generos=generos, 
+        editar=True
+    )
+
 @app.route('/deletar_vinil/<int:id>', methods=['POST'])
 def deletar_vinil(id):
     vinil = Vinil.query.get_or_404(id)
     db.session.delete(vinil)
     db.session.commit()
     return redirect(url_for('listar_vinis'))
+
+@app.route('/clientes')
+def listar_clientes():
+    clientes = Cliente.query.all()
+    return render_template('clientes.html', clientes=clientes)
 
 @app.route('/cliente/adicionar', methods=['GET', 'POST'])
 def adicionar_cliente():
@@ -106,6 +130,31 @@ def adicionar_cliente():
 
     return render_template('adicionar_cliente.html')
 
+@app.route('/cliente/editar/<int:id>', methods=['GET', 'POST'])
+def editar_cliente(id):
+    cliente = Cliente.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        cliente.Nome = request.form['nome']
+        cliente.Email = request.form['email']
+        cliente.Telefone = request.form['telefone']
+        cliente.Endereco = request.form['endereco']
+
+        try:
+            db.session.commit()
+            flash('Cliente atualizado com sucesso!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao atualizar cliente: {str(e)}', 'error')
+
+        return redirect(url_for('listar_clientes'))
+
+    return render_template(
+        'editar_cliente.html', 
+        cliente=cliente, 
+        editar=True  
+    )
+
 @app.route('/cliente/deletar/<int:id>', methods=['POST'])
 def deletar_cliente(id):
     cliente = Cliente.query.get(id)
@@ -116,6 +165,11 @@ def deletar_cliente(id):
     else:
         flash('Cliente não encontrado!', 'error')
     return redirect(url_for('listar_clientes'))
+
+@app.route('/vendas')
+def listar_vendas():
+    vendas = Venda.query.all()
+    return render_template('vendas.html', vendas=vendas)
 
 @app.route('/venda/adicionar', methods=['GET', 'POST'])
 def adicionar_venda():
@@ -159,6 +213,25 @@ def adicionar_venda():
     vinis = Vinil.query.all()
     clientes = Cliente.query.all()
     return render_template('adicionar_venda.html', clientes=clientes, vinis=vinis)
+
+@app.route('/venda/deletar/<int:id>', methods=['POST'])
+def deletar_venda(id):
+    venda = Venda.query.get(id)
+    if not venda:
+        flash('Venda não encontrada!', 'error')
+        return redirect(url_for('listar_vendas'))
+
+    for item in venda.itens_venda:
+        vinil = Vinil.query.get(item.IDVinil)
+        if vinil:
+            vinil.Estoque += item.Quantidade
+        db.session.delete(item) 
+
+    db.session.delete(venda) 
+    db.session.commit()
+
+    flash('Venda deletada com sucesso!', 'success')
+    return redirect(url_for('listar_vendas'))
 
 @app.route('/generos')
 def listar_generos():

@@ -29,10 +29,13 @@
             <td class="px-4 py-2">{{ cliente.Email }}</td>
             <td class="px-4 py-2">{{ cliente.Telefone }}</td>
             <td class="px-4 py-2">{{ cliente.Endereco }}</td>
-            <td class="px-4 py-2">
+            <td class="px-4 py-2 flex space-x-2">
+                <form action="{{ url_for('editar_cliente', id=cliente.IDCliente) }}" method="get">
+                    <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded">Editar</button>
+                </form>
                 <form action="{{ url_for('deletar_cliente', id=cliente.IDCliente) }}" method="post">
-                    <button type="submit" class="bg-red-600 text-white px-2 py-1">Deletar</button>
-                </form>                
+                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded" onclick="return confirm('Tem certeza que deseja excluir este cliente?')">Deletar</button>
+                </form>
             </td>
         </tr>
         {% else %}
