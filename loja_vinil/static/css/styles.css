@@ -85,3 +85,8 @@ body {
 .form-container button:hover {
     background-color: #1d4ed8; 
 }
+.fa-search {
+    margin: 0;
+    font-size: 1rem;
+}
+

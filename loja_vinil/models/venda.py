@@ -10,7 +10,6 @@ class Venda(db.Model):
     IDCliente = db.Column(db.Integer, db.ForeignKey('Cliente.IDCliente'), nullable=True)  
 
     itens_venda = db.relationship('ItensVenda', backref='venda', lazy=True)
-
     def __repr__(self):
         return f"<Venda {self.IDVenda} - {self.DataVenda} - R$ {self.ValorTotal}>"
 

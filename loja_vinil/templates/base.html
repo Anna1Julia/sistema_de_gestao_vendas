@@ -3,20 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Loja de Vinis{% endblock %}</title>
+    <title>{% block title %}TamTamTam - Loja de Vinis{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <header class="bg-blue-600 text-white py-4 shadow">
         <div class="container mx-auto flex justify-between items-center px-4">
-            <h1 class="text-xl font-bold">Loja de Vinis</h1>
-            <nav>
+            <h1 class="text-xl font-bold">TamTamTam</h1>
+            <nav class="flex items-center space-x-4">
                 <a href="{{ url_for('index') }}" class="px-4 hover:underline">Home</a>
                 <a href="{{ url_for('listar_vinis') }}" class="px-4 hover:underline">Vinis</a>
                 <a href="{{ url_for('listar_generos') }}" class="px-4 hover:underline">Gêneros</a>
                 <a href="{{ url_for('listar_clientes') }}" class="px-4 hover:underline">Clientes</a>
                 <a href="{{ url_for('listar_vendas') }}" class="px-4 hover:underline">Vendas</a>
+                
+                <form action="{{ url_for('pesquisar') }}" method="GET" class="flex items-center text-black">
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Digite para pesquisar..."
+                        class="border p-2 rounded-l w-full"
+                        value="{{ search if search else '' }}"
+                    />
+                    <button type="submit" class="bg-blue-500 text-white p-2 rounded-r">
+                        <i class="fas fa-search"></i> 
+                    </button>
+                </form>                
+                
             </nav>            
         </div>
     </header>
@@ -40,7 +55,7 @@
     </main>
 
     <footer class="bg-gray-800 text-gray-300 py-4 text-center text-sm">
-        &copy; {{ year }} Loja de Vinis - Todos os direitos reservados.
+        &copy; {{ year }} TamTamTam - Todos os direitos reservados.
     </footer>
 </body>
 </html>

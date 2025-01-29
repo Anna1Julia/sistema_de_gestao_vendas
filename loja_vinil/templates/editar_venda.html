@@ -1,34 +1,31 @@
 {% extends 'base.html' %}
-{% block title %}Adicionar Venda{% endblock %}
+{% block title %}Editar Venda{% endblock %}
 {% block content %}
-<h2 class="text-2xl font-bold mb-4">Adicionar Nova Venda</h2>
-<form method="post" action="{{ url_for('adicionar_venda') }}" class="bg-white shadow rounded-lg p-4">
+<h2 class="text-2xl font-bold mb-4">Editar Venda</h2>
+<form method="post" action="{{ url_for('editar_venda', id=venda.IDVenda) }}" class="bg-white shadow rounded-lg p-4">
     <div class="mb-4">
         <label for="cliente_id" class="block mb-2 font-medium">Cliente:</label>
         <select id="cliente_id" name="cliente_id" required class="w-full border px-3 py-2 rounded">
             {% for cliente in clientes %}
-                <option value="{{ cliente.IDCliente }}">{{ cliente.Nome }}</option>
+                <option value="{{ cliente.IDCliente }}" {% if cliente.IDCliente == venda.IDCliente %}selected{% endif %}>{{ cliente.Nome }}</option>
             {% endfor %}
-        </select>     
-    </div>
-
-    <div class="mb-4">
-        <label for="data_venda" class="block mb-2 font-medium">Data da Venda:</label>
-        <input type="date" id="data_venda" name="data_venda" required class="w-full border px-3 py-2 rounded" />
+        </select>
     </div>
 
     <div class="mb-4" id="vinis-container">
         <label for="vinis" class="block mb-2 font-medium">Vinil(s):</label>
-        <div class="vinil-item mb-4 flex items-center" id="vinil-1">
+        {% for item in venda.itens_venda %}
+        <div class="vinil-item mb-4 flex items-center" id="vinil-{{ loop.index }}">
             <select name="vinis[]" required class="w-full border px-3 py-2 rounded vinil-select">
                 <option value="">Selecione um vinil</option>
                 {% for vinil in vinis %}
-                    <option value="{{ vinil.id }}" data-estoque="{{ vinil.Estoque }}">{{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})</option>
+                    <option value="{{ vinil.id }}" data-estoque="{{ vinil.Estoque }}" {% if vinil.id == item.IDVinil %}selected{% endif %}>{{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})</option>
                 {% endfor %}
             </select>
-            <input type="number" name="quantidades[]" min="1" max="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="1">
+            <input type="number" name="quantidades[]" min="1" max="{{ item.PrecoUnitario }}" value="{{ item.Quantidade }}" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="{{ loop.index }}">
             <button type="button" class="ml-2 text-red-600 remove-vinil">Remover</button>
         </div>
+        {% endfor %}
     </div>
 
     <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded" id="add-vinil">Adicionar Vinil</button>
@@ -38,15 +35,15 @@
 </form>
 
 <script>
-    let vinilCount = 1;  // Contador de vinis no formulário
+    let vinilCount = {{ venda.itens_venda|length }};
 
     document.getElementById('add-vinil').addEventListener('click', function() {
         vinilCount++;
-        
+
         const vinilContainer = document.createElement('div');
         vinilContainer.classList.add('vinil-item', 'mb-4', 'flex', 'items-center');
         vinilContainer.id = `vinil-${vinilCount}`;
-        
+
         vinilContainer.innerHTML = `
             <select name="vinis[]" required class="w-full border px-3 py-2 rounded vinil-select">
                 <option value="">Selecione um vinil</option>
@@ -57,7 +54,7 @@
             <input type="number" name="quantidades[]" min="1" max="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="${vinilCount}">
             <button type="button" class="ml-2 text-red-600 remove-vinil">Remover</button>
         `;
-        
+
         document.getElementById('vinis-container').appendChild(vinilContainer);
     });
 

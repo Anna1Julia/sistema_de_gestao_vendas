@@ -4,7 +4,7 @@
 <h2 class="text-2xl font-bold mb-4">Listagem de Clientes</h2>
 
 <form action="{{ url_for('adicionar_cliente') }}" method="get" class="inline-flex items-center mb-4">
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded flex items-center">
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow flex items-center hover:bg-blue-700 transition">
         <span class="mr-2">Adicionar Cliente</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -12,37 +12,55 @@
     </button>
 </form>
 
-<table class="table-auto w-full bg-white rounded shadow">
-    <thead class="bg-gray-200">
-        <tr>
-            <th class="px-4 py-2">Nome</th>
-            <th class="px-4 py-2">Email</th>
-            <th class="px-4 py-2">Telefone</th>
-            <th class="px-4 py-2">Endereço</th>
-            <th class="px-4 py-2">Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for cliente in clientes %}
-        <tr class="border-t">
-            <td class="px-4 py-2">{{ cliente.Nome }}</td>
-            <td class="px-4 py-2">{{ cliente.Email }}</td>
-            <td class="px-4 py-2">{{ cliente.Telefone }}</td>
-            <td class="px-4 py-2">{{ cliente.Endereco }}</td>
-            <td class="px-4 py-2 flex space-x-2">
-                <form action="{{ url_for('editar_cliente', id=cliente.IDCliente) }}" method="get">
-                    <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded">Editar</button>
-                </form>
-                <form action="{{ url_for('deletar_cliente', id=cliente.IDCliente) }}" method="post">
-                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded" onclick="return confirm('Tem certeza que deseja excluir este cliente?')">Deletar</button>
-                </form>
-            </td>
-        </tr>
-        {% else %}
-        <tr>
-            <td colspan="5" class="text-center px-4 py-2">Nenhum cliente encontrado.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<form action="{{ url_for('listar_clientes') }}" method="get" class="inline-flex items-center mb-4">
+    <label for="min_value" class="mr-2">Valor mínimo de compras:</label>
+    <input type="number" name="min_value" id="min_value" class="px-2 py-1 rounded border" placeholder="Ex: 1000">
+
+    <label for="start_date" class="ml-4 mr-2">Data inicial:</label>
+    <input type="date" name="start_date" id="start_date" class="px-2 py-1 rounded border">
+
+    <label for="end_date" class="ml-4 mr-2">Data final:</label>
+    <input type="date" name="end_date" id="end_date" class="px-2 py-1 rounded border">
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow flex items-center hover:bg-blue-700 transition ml-4">
+        Filtrar
+    </button>
+</form>
+
+
+<div class="overflow-x-auto">
+    <table class="table-auto w-full bg-white rounded shadow">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="px-4 py-2 text-left">Nome</th>
+                <th class="px-4 py-2 text-left">Email</th>
+                <th class="px-4 py-2 text-left">Telefone</th>
+                <th class="px-4 py-2 text-left">Endereço</th>
+                <th class="px-4 py-2 text-left">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr class="border-t hover:bg-gray-100 transition">
+                <td class="px-4 py-2">{{ cliente.Nome }}</td>
+                <td class="px-4 py-2">{{ cliente.Email }}</td>
+                <td class="px-4 py-2">{{ cliente.Telefone }}</td>
+                <td class="px-4 py-2">{{ cliente.Endereco }}</td>
+                <td class="px-4 py-2 flex space-x-2">
+                    <form action="{{ url_for('editar_cliente', id=cliente.IDCliente) }}" method="get">
+                        <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded shadow hover:bg-yellow-600 transition">Editar</button>
+                    </form>
+                    <form action="{{ url_for('deletar_cliente', id=cliente.IDCliente) }}" method="post">
+                        <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow hover:bg-red-700 transition" onclick="return confirm('Tem certeza que deseja excluir este cliente?')">Deletar</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center px-4 py-2">Nenhum cliente encontrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
