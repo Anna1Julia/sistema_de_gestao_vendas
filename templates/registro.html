@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Registro - TamTamTam{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-center mb-6">Criar Conta</h2>
+    <form method="POST" action="{{ url_for('register') }}" class="space-y-4">
+        <div>
+            <label for="nome" class="block font-medium">Nome:</label>
+            <input type="text" id="nome" name="nome" required 
+                   class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        <div>
+            <label for="email" class="block font-medium">Email:</label>
+            <input type="email" id="email" name="email" required 
+                   class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        <div>
+            <label for="senha" class="block font-medium">Senha:</label>
+            <input type="password" id="senha" name="senha" required 
+                   class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        <div>
+            <label for="confirmar_senha" class="block font-medium">Confirmar Senha:</label>
+            <input type="password" id="confirmar_senha" name="confirmar_senha" required 
+                   class="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+            Criar Conta
+        </button>
+    </form>
+    <p class="mt-4 text-center">
+        Já tem uma conta? <a href="{{ url_for('login') }}" class="text-blue-500 hover:underline">Entre aqui</a>
+    </p>
+</div>
+{% endblock %}
