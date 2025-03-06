@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models import db
-from models.venda import Venda
+from models.venda import Venda, ItensVenda
 from models.cliente import Cliente
 from models.vinil import Vinil
 
-vendas = Blueprint('vendas', __name__)
+vendas_bp = Blueprint('vendas', __name__)
 
-@vendas.route('/vendas', methods=['GET'])
+@vendas_bp.route('/vendas', methods=['GET'])
 def listar_vendas():
     cliente_id = request.args.get('cliente_id')
     periodo = request.args.get('periodo')
@@ -41,7 +41,7 @@ def listar_vendas():
 
     return render_template('vendas.html', vendas=vendas, clientes=clientes)
 
-@vendas.route('/venda/adicionar', methods=['GET', 'POST'])
+@vendas_bp.route('/venda/adicionar', methods=['GET', 'POST'])
 def adicionar_venda():
     if request.method == 'POST':
         cliente_id = request.form.get('IDCliente')
@@ -117,7 +117,7 @@ def adicionar_venda():
     clientes = Cliente.query.all()
     return render_template('adicionar_venda.html', clientes=clientes, vinis=vinis)
 
-@vendas.route('/venda/editar/<int:id>', methods=['GET', 'POST'])
+@vendas_bp.route('/venda/editar/<int:id>', methods=['GET', 'POST'])
 def editar_venda(id):
     venda = Venda.query.get_or_404(id) 
     vinis = Vinil.query.all() 
@@ -169,7 +169,7 @@ def editar_venda(id):
 
     return render_template('editar_venda.html', venda=venda, vinis=vinis, clientes=clientes)
 
-@vendas.route('/venda/deletar/<int:id>', methods=['POST'])
+@vendas_bp.route('/venda/deletar/<int:id>', methods=['POST'])
 def deletar_venda(id):
     venda = Venda.query.get(id)
     if not venda:

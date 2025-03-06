@@ -1,18 +1,34 @@
 from flask import Flask
 from models import db
-from routes import vinis, clientes, vendas, generos, pesquisa, main, usuario
+from flask_login import LoginManager
+
+from routes.vinis_bp import vinis_bp
+from routes.clientes_bp import clientes_bp
+from routes.vendas_bp import vendas_bp
+from routes.generos_bp import generos_bp
+from routes.main_bp import main_bp
+from routes.usuario_bp import usuario_bp
 
 app = Flask(__name__)
-app.config.from_object('config.Config')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sua_conexao_com_o_banco'
+app.config['SECRET_KEY'] = 'sua_chave_secreta'
+
 db.init_app(app)
 
-app.register_blueprint(vinis, url_prefix='/vinis')
-app.register_blueprint(clientes, url_prefix='/clientes')
-app.register_blueprint(vendas, url_prefix='/vendas')
-app.register_blueprint(generos, url_prefix='/generos')
-app.register_blueprint(pesquisa, url_prefix='/pesquisa')
-app.register_blueprint(main, url_prefix='/')
-app.register_blueprint(usuario, url_prefix='/usuario')
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'usuario.login'
 
-if __name__ == '__main__':
+app.register_blueprint(vinis_bp)
+app.register_blueprint(clientes_bp)
+app.register_blueprint(vendas_bp)
+app.register_blueprint(generos_bp)
+app.register_blueprint(main_bp)
+app.register_blueprint(usuario_bp)
+
+from routes.pesquisa_bp import pesquisa_bp
+app.register_blueprint(pesquisa_bp)
+
+if __name__ == "__main__":
     app.run(debug=True)

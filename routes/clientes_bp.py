@@ -4,9 +4,15 @@ from models.cliente import Cliente
 from models.venda import Venda, ItensVenda
 from datetime import datetime
 
-clientes = Blueprint('clientes', __name__)
+clientes_bp = Blueprint('clientes', __name__)
 
-@clientes.route('/clientes', methods=['GET'])
+def validar_data(data_str):
+    try:
+        return datetime.strptime(data_str, '%Y-%m-%d')
+    except ValueError:
+        return None
+
+@clientes_bp.route('/clientes', methods=['GET'])
 def listar_clientes():
     min_value = request.args.get('min_value', type=float)
     start_date = request.args.get('start_date')
@@ -15,21 +21,25 @@ def listar_clientes():
     query = Cliente.query
     
     if min_value:
-        query = query.join(Venda).join(ItensVenda).filter(
-            Venda.IDCliente == Cliente.IDCliente,
-            (ItensVenda.Quantidade * ItensVenda.PrecoUnitario) > min_value
-        )
+        query = query.join(Venda, Venda.IDCliente == Cliente.IDCliente)\
+                     .join(ItensVenda, ItensVenda.IDVenda == Venda.IDVenda)\
+                     .filter((ItensVenda.Quantidade * ItensVenda.PrecoUnitario) > min_value)
     
     if start_date and end_date:
-        start_date = datetime.strptime(start_date, '%Y-%m-%d')
-        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        start_date = validar_data(start_date)
+        end_date = validar_data(end_date)
+        
+        if not start_date or not end_date:
+            flash('Formato de data inválido. Use o formato AAAA-MM-DD.', 'error')
+            return redirect(url_for('clientes.listar_clientes'))
+        
         query = query.filter(Venda.DataVenda >= start_date, Venda.DataVenda <= end_date)
     
-    clientes = query.distinct().all()
+    clientes = query.all()
     
     return render_template('clientes.html', clientes=clientes)
 
-@clientes.route('/cliente/adicionar', methods=['GET', 'POST'])
+@clientes_bp.route('/cliente/adicionar', methods=['GET', 'POST'])
 def adicionar_cliente():
     if request.method == 'POST':
         nome = request.form['nome']
@@ -51,7 +61,7 @@ def adicionar_cliente():
 
     return render_template('adicionar_cliente.html')
 
-@clientes.route('/cliente/editar/<int:id>', methods=['GET', 'POST'])
+@clientes_bp.route('/cliente/editar/<int:id>', methods=['GET', 'POST'])
 def editar_cliente(id):
     cliente = Cliente.query.get_or_404(id)
     
@@ -72,7 +82,7 @@ def editar_cliente(id):
     
     return render_template('editar_cliente.html', cliente=cliente, editar=True)
 
-@clientes.route('/cliente/deletar/<int:id>', methods=['POST'])
+@clientes_bp.route('/cliente/deletar/<int:id>', methods=['POST'])
 def deletar_cliente(id):
     cliente = Cliente.query.get(id)
     
