@@ -265,7 +265,7 @@ def adicionar_venda():
 
         nova_venda = Venda(IDCliente=cliente_id, ValorTotal=0, DataVenda=data_venda)
         db.session.add(nova_venda)
-        db.session.flush()  # Para garantir que IDVenda esteja disponível
+        db.session.flush()
 
         valor_total = 0
         for vinil_id, quantidade in zip(vinis_selecionados, quantidades):
@@ -297,7 +297,7 @@ def adicionar_venda():
                 )
                 db.session.add(item_venda)
                 valor_total += preco_unitario * quantidade
-                vinil.Estoque -= quantidade  # Atualiza o estoque do vinil
+                vinil.Estoque -= quantidade
 
         nova_venda.ValorTotal = valor_total
         db.session.commit()
@@ -321,7 +321,6 @@ def editar_venda(id):
         vinis_selecionados = request.form.getlist('vinis[]')
         quantidades = request.form.getlist('quantidades[]')
         
-        # Remover os itens da venda para atualização
         ItensVenda.query.filter_by(IDVenda=venda.IDVenda).delete()
 
         valor_total = 0
@@ -352,7 +351,7 @@ def editar_venda(id):
                 )
                 db.session.add(item_venda)
                 valor_total += preco_unitario * quantidade
-                vinil.Estoque -= quantidade  # Atualiza o estoque do vinil
+                vinil.Estoque -= quantidade
 
         venda.ValorTotal = valor_total
         db.session.commit()

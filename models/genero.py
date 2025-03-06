@@ -8,7 +8,7 @@ class GeneroMusical(db.Model):
     IDGeneroMusical = Column(Integer, primary_key=True, autoincrement=True)
     Nome = Column(String(100), nullable=False, unique=True)
 
-    vinis = relationship('Vinil', backref='genero_musical', lazy='dynamic')
+    vinis = relationship('Vinil', back_populates='genero_musical', lazy='dynamic')
 
     def __repr__(self):
         return f"<GeneroMusical {self.Nome}>"

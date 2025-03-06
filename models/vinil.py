@@ -13,7 +13,7 @@ class Vinil(db.Model):
     Estoque = Column(Integer, nullable=False, default=0)
     IDGeneroMusical = Column(Integer, ForeignKey('GeneroMusical.IDGeneroMusical'), nullable=False)
 
-    genero = relationship('GeneroMusical', backref='generos_vinil')
+    genero_musical = relationship('GeneroMusical', back_populates='vinis')
 
     def __repr__(self):
         return f"<Vinil {self.Titulo} - {self.Artista} - R$ {self.Preco}>"
