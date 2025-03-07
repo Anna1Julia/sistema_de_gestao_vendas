@@ -15,7 +15,8 @@ try:
 except Exception as e:
     print("Erro ao criar o banco de dados:", e)
 finally:
-    connection.close()
+    if 'connection' in locals():
+        connection.close()
 
 DATABASE_URI = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
 engine = create_engine(DATABASE_URI)
@@ -24,14 +25,10 @@ try:
     with engine.connect() as connection:
         with open("schema.sql", "r", encoding="utf-8") as file:
             sql_script = file.read()
+
         for statement in sql_script.split(";"):
             if statement.strip():
                 connection.execute(text(statement))
         print("Banco de dados configurado com sucesso!")
 except Exception as e:
     print("Erro ao configurar o banco de dados:", e)
-
-try:
-    connection.close()
-except NameError:
-    pass

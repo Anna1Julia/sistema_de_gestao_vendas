@@ -1,9 +1,23 @@
-{% extends 'base.html' %}
-{% block title %}Home{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}TamTamTam{% endblock %}
+
 {% block content %}
-<div class="text-center">
-    <h2 class="text-2xl font-bold">Bem-vindo à TamTamTam!</h2>
-    <p class="mt-4">Explore nossa coleção, gerencie clientes, vendas e gêneros facilmente.</p>
-</div>
-</div>
+    {% if current_user.is_authenticated %}
+        <div class="max-w-md mx-auto bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold text-center mb-6">Bem-vindo, {{ usuario.Nome }}!</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-medium">Email:</label>
+                    <p>{{ usuario.Email }}</p>
+                </div>
+                <div>
+                    <label class="block font-medium">Tipo:</label>
+                    <p>{{ usuario.Tipo }}</p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p class="text-center text-xl">Você precisa estar logado para acessar esta página.</p>
+    {% endif %}
 {% endblock %}

@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
+
 {% block title %}Gêneros Musicais{% endblock %}
+
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Gêneros Musicais</h2>
 
-<form method="POST" action="{{ url_for('adicionar_genero') }}" class="mb-4 flex items-center space-x-2">
+<form method="POST" action="{{ url_for('generos.adicionar_genero') }}" class="mb-4 flex items-center space-x-2">
     <input type="text" name="nome" placeholder="Nome do Gênero" class="border px-2 py-1 flex-grow rounded" required>
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Adicionar</button>
 </form>
@@ -23,9 +25,12 @@
                 <td class="px-4 py-2">{{ genero.IDGeneroMusical }}</td>
                 <td class="px-4 py-2">{{ genero.Nome }}</td>
                 <td class="px-4 py-2">
-                    <form action="{{ url_for('deletar_genero', id=genero.IDGeneroMusical) }}" method="POST" class="inline">
-                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded">Excluir</button>
-                    </form>                
+                    <a href="{{ url_for('generos.editar_genero', id=genero.IDGeneroMusical) }}" 
+                       class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Editar</a>
+                    
+                    <form action="{{ url_for('generos.deletar_genero', id=genero.IDGeneroMusical) }}" method="POST" class="inline">
+                        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Excluir</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}

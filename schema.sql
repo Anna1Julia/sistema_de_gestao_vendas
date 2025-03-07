@@ -64,21 +64,25 @@ CREATE INDEX idx_titulo_vinil ON Vinil(Titulo);
 CREATE INDEX idx_nome_cliente ON Cliente(Nome);
 CREATE INDEX idx_data_venda ON Venda(DataVenda);
 
-DELIMITER //
+DELIMITER $$
+
 CREATE TRIGGER verificar_estoque
 BEFORE INSERT ON ItensVenda
 FOR EACH ROW
 BEGIN
     DECLARE estoque_atual INT;
-    SELECT Estoque INTO estoque_atual FROM Vinil WHERE IDVinil = NEW.IDVinil;
+
+    SELECT Estoque INTO estoque_atual
+    FROM Vinil
+    WHERE IDVinil = NEW.IDVinil;
+
     IF estoque_atual < NEW.Quantidade THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Não há estoque suficiente!';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Estoque insuficiente!';
     END IF;
-END;
-//
+END $$
+
 DELIMITER ;
 
-DELIMITER //
 CREATE TRIGGER log_vendas
 AFTER INSERT ON Venda
 FOR EACH ROW
@@ -86,8 +90,6 @@ BEGIN
     INSERT INTO logs_vendas (operacao, id_venda, id_cliente, usuario)
     VALUES ('INSERT', NEW.IDVenda, NEW.IDCliente, 'Sistema');
 END;
-//
-DELIMITER ;
 
 INSERT INTO Usuario (Nome, Email, Senha, Tipo) 
 VALUES ('Admin', 'admin@email.com', SHA2('senha123', 256), 'admin')
