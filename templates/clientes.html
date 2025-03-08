@@ -3,7 +3,7 @@
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Listagem de Clientes</h2>
 
-<form action="{{ url_for('adicionar_cliente') }}" method="get" class="inline-flex items-center mb-4">
+<form action="{{ url_for('clientes.adicionar_cliente') }}" method="get" class="inline-flex items-center mb-4">
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow flex items-center hover:bg-blue-700 transition">
         <span class="mr-2">Adicionar Cliente</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -12,7 +12,7 @@
     </button>
 </form>
 
-<form action="{{ url_for('listar_clientes') }}" method="get" class="inline-flex items-center mb-4">
+<form action="{{ url_for('clientes.listar_clientes') }}" method="get" class="inline-flex items-center mb-4">
     <label for="min_value" class="mr-2">Valor mínimo de compras:</label>
     <input type="number" name="min_value" id="min_value" class="px-2 py-1 rounded border" placeholder="Ex: 1000">
 
@@ -47,10 +47,10 @@
                 <td class="px-4 py-2">{{ cliente.Telefone }}</td>
                 <td class="px-4 py-2">{{ cliente.Endereco }}</td>
                 <td class="px-4 py-2 flex space-x-2">
-                    <form action="{{ url_for('editar_cliente', id=cliente.IDCliente) }}" method="get">
+                    <form action="{{ url_for('clientes.editar_cliente', id=cliente.IDCliente) }}" method="get">
                         <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded shadow hover:bg-yellow-600 transition">Editar</button>
                     </form>
-                    <form action="{{ url_for('deletar_cliente', id=cliente.IDCliente) }}" method="post">
+                    <form action="{{ url_for('clientes.deletar_cliente', id=cliente.IDCliente) }}" method="post">
                         <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow hover:bg-red-700 transition" onclick="return confirm('Tem certeza que deseja excluir este cliente?')">Deletar</button>
                     </form>
                 </td>

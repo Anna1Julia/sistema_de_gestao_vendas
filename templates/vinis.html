@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
+
 {% block title %}Vinis{% endblock %}
+
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Listagem de Vinis</h2>
 
-<form action="{{ url_for('adicionar_vinil') }}" method="get" class="inline-flex items-center mb-4">
+<form action="{{ url_for('vinis.adicionar_vinil') }}" method="get" class="inline-flex items-center mb-4">
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow flex items-center hover:bg-blue-700 transition">
         <span class="mr-2">Adicionar Vinil</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -16,15 +18,15 @@
     <select name="genero" class="border px-2 py-1 rounded shadow">
         <option value="">Todos os Gêneros</option>
         {% for genero in generos %}
-        <option value="{{ genero.IDGeneroMusical }}">{{ genero.Nome }}</option>
+        <option value="{{ genero.IDGeneroMusical }}" {% if genero.IDGeneroMusical == request.args.get('genero')|int %}selected{% endif %}>{{ genero.Nome }}</option>
         {% endfor %}
     </select>
-    <input type="number" name="preco_min" placeholder="Preço Min" class="border px-2 py-1 rounded shadow">
-    <input type="number" name="preco_max" placeholder="Preço Max" class="border px-2 py-1 rounded shadow">
+    <input type="number" name="preco_min" placeholder="Preço Min" class="border px-2 py-1 rounded shadow" value="{{ request.args.get('preco_min') }}">
+    <input type="number" name="preco_max" placeholder="Preço Max" class="border px-2 py-1 rounded shadow" value="{{ request.args.get('preco_max') }}">
     <select name="ordenar" class="border px-2 py-1 rounded shadow">
-        <option value="titulo">Ordenar por Título</option>
-        <option value="preco">Ordenar por Preço</option>
-        <option value="ano">Ordenar por Ano</option>
+        <option value="titulo" {% if request.args.get('ordenar') == 'titulo' %}selected{% endif %}>Ordenar por Título</option>
+        <option value="preco" {% if request.args.get('ordenar') == 'preco' %}selected{% endif %}>Ordenar por Preço</option>
+        <option value="ano" {% if request.args.get('ordenar') == 'ano' %}selected{% endif %}>Ordenar por Ano</option>
     </select>
 
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
@@ -51,14 +53,14 @@
                 <td class="px-4 py-2">{{ vinil.Titulo }}</td>
                 <td class="px-4 py-2">{{ vinil.Artista }}</td>
                 <td class="px-4 py-2">{{ vinil.AnoLancamento }}</td>
-                <td class="px-4 py-2">{{ vinil.genero.Nome }}</td>
+                <td class="px-4 py-2">{{ vinil.genero_musical.Nome }}</td>
                 <td class="px-4 py-2">R$ {{ vinil.Preco }}</td>
                 <td class="px-4 py-2">{{ vinil.Estoque }}</td>
                 <td class="px-4 py-2 flex space-x-2">
-                    <form action="{{ url_for('editar_vinil', id=vinil.IDVinil) }}" method="get">
+                    <form action="{{ url_for('vinis.editar_vinil', id=vinil.IDVinil) }}" method="get">
                         <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded shadow hover:bg-yellow-600 transition">Editar</button>
                     </form>
-                    <form action="{{ url_for('deletar_vinil', id=vinil.IDVinil) }}" method="post">
+                    <form action="{{ url_for('vinis.deletar_vinil', id=vinil.IDVinil) }}" method="post">
                         <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow hover:bg-red-700 transition" onclick="return confirm('Tem certeza que deseja excluir este vinil?')">Deletar</button>
                     </form>
                 </td>

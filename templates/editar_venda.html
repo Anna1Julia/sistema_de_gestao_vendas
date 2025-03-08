@@ -2,7 +2,7 @@
 {% block title %}Editar Venda{% endblock %}
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Editar Venda</h2>
-<form method="post" action="{{ url_for('editar_venda', id=venda.IDVenda) }}" class="bg-white shadow rounded-lg p-4">
+<form method="post" action="{{ url_for('vendas.editar_venda', id=venda.IDVenda) }}" class="bg-white shadow rounded-lg p-4">
     <div class="mb-4">
         <label for="cliente_id" class="block mb-2 font-medium">Cliente:</label>
         <select id="cliente_id" name="cliente_id" required class="w-full border px-3 py-2 rounded">
@@ -31,7 +31,7 @@
     <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded" id="add-vinil">Adicionar Vinil</button>
 
     <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded mt-4">Salvar</button>
-    <a href="{{ url_for('listar_vendas') }}" class="ml-4 text-blue-600 hover:underline">Cancelar</a>
+    <a href="{{ url_for('vendas.listar_vendas') }}" class="ml-4 text-blue-600 hover:underline">Cancelar</a>
 </form>
 
 <script>

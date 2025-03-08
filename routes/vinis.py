@@ -4,9 +4,9 @@ from models import db
 from models.vinil import Vinil
 from models.genero import GeneroMusical
 
-vinis = Blueprint('vinis', __name__)
+vinis_bp = Blueprint('vinis', __name__)
 
-@vinis.route('/vinis', methods=['GET'])
+@vinis_bp.route('/vinis', methods=['GET'])
 def listar_vinis():
     genero = request.args.get('genero', type=int)
     preco_min = request.args.get('preco_min', type=float)
@@ -32,7 +32,7 @@ def listar_vinis():
     generos = GeneroMusical.query.all()
     return render_template('vinis.html', vinis=vinis, generos=generos)
 
-@vinis.route('/adicionar_vinil', methods=['GET', 'POST'])
+@vinis_bp.route('/adicionar_vinil', methods=['GET', 'POST'])
 @login_required
 def adicionar_vinil():
     if not current_user.is_admin:
@@ -68,7 +68,7 @@ def adicionar_vinil():
 
     return render_template('adicionar_vinil.html', generos=generos)
 
-@vinis.route('/vinil/editar/<int:id>', methods=['GET', 'POST'])
+@vinis_bp.route('/vinil/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar_vinil(id):
     if not current_user.is_admin:
@@ -102,7 +102,7 @@ def editar_vinil(id):
         editar=True
     )
 
-@vinis.route('/deletar_vinil/<int:id>', methods=['POST'])
+@vinis_bp.route('/deletar_vinil/<int:id>', methods=['POST'])
 @login_required
 def deletar_vinil(id):
     if not current_user.is_admin:  

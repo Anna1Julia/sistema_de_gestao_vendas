@@ -5,9 +5,9 @@ from models.venda import Venda, ItensVenda
 from datetime import datetime
 from flask_login import login_required, current_user
 
-clientes = Blueprint('clientes', __name__)
+clientes_bp = Blueprint('clientes', __name__)
 
-@clientes.route('/clientes', methods=['GET'])
+@clientes_bp.route('/clientes', methods=['GET'])
 @login_required
 def listar_clientes():
     min_value = request.args.get('min_value', type=float)
@@ -31,7 +31,7 @@ def listar_clientes():
     
     return render_template('clientes.html', clientes=clientes)
 
-@clientes.route('/cliente/adicionar', methods=['GET', 'POST'])
+@clientes_bp.route('/cliente/adicionar', methods=['GET', 'POST'])
 @login_required
 def adicionar_cliente():
     if not current_user.Tipo == 'admin':
@@ -58,7 +58,7 @@ def adicionar_cliente():
 
     return render_template('adicionar_cliente.html')
 
-@clientes.route('/cliente/editar/<int:id>', methods=['GET', 'POST'])
+@clientes_bp.route('/cliente/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar_cliente(id):
     if not current_user.Tipo == 'admin':
@@ -84,7 +84,7 @@ def editar_cliente(id):
     
     return render_template('editar_cliente.html', cliente=cliente, editar=True)
 
-@clientes.route('/cliente/deletar/<int:id>', methods=['POST'])
+@clientes_bp.route('/cliente/deletar/<int:id>', methods=['POST'])
 @login_required
 def deletar_cliente(id):
     if not current_user.Tipo == 'admin':

@@ -1,4 +1,5 @@
 from flask import Flask, redirect, url_for
+from flask_migrate import Migrate
 from models import db
 from routes import vinis_bp, clientes_bp, vendas_bp, generos_bp, pesquisa_bp, main_bp, usuario_bp
 from flask_login import LoginManager
@@ -8,6 +9,8 @@ from werkzeug.security import generate_password_hash
 app = Flask(__name__)
 app.config.from_object('config.Config')
 db.init_app(app)
+
+migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -20,7 +23,7 @@ def load_user(user_id):
 def unauthorized():
     return redirect(url_for('usuario.login'))
 
-app.register_blueprint(vinis_bp, url_prefix='/vinis')
+app.register_blueprint(vinis_bp, url_prefix='/')
 app.register_blueprint(clientes_bp, url_prefix='/clientes')
 app.register_blueprint(vendas_bp, url_prefix='/vendas')
 app.register_blueprint(generos_bp, url_prefix='/generos')
@@ -31,7 +34,6 @@ app.register_blueprint(usuario_bp, url_prefix='/usuario')
 def criar_admin():
     with app.app_context():
         db.create_all()
-        print("Banco de dados configurado!")
 
         if not Usuario.query.filter_by(Email="admin@email.com").first():
             admin = Usuario(

@@ -3,15 +3,15 @@ from models import db
 from models.genero import GeneroMusical
 from flask_login import login_required, current_user
 
-generos = Blueprint('generos', __name__)
+generos_bp = Blueprint('generos', __name__)
 
-@generos.route('/generos')
+@generos_bp.route('/generos')
 @login_required
 def listar_generos():
     generos = GeneroMusical.query.all()
     return render_template('generos.html', generos=generos)
 
-@generos.route('/genero/adicionar', methods=['POST'])
+@generos_bp.route('/genero/adicionar', methods=['POST'])
 @login_required
 def adicionar_genero():
     if not current_user.Tipo == 'admin':
@@ -26,7 +26,7 @@ def adicionar_genero():
         flash('Gênero musical adicionado com sucesso!', 'success')
         return redirect(url_for('generos.listar_generos'))
     
-@generos.route('/genero/editar/<int:id>', methods=['GET', 'POST'])
+@generos_bp.route('/genero/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar_genero(id):
     if not current_user.Tipo == 'admin':
@@ -47,7 +47,7 @@ def editar_genero(id):
     
     return render_template('editar_genero.html', genero=genero)
 
-@generos.route('/genero/deletar/<int:id>', methods=['POST'])
+@generos_bp.route('/genero/deletar/<int:id>', methods=['POST'])
 @login_required
 def deletar_genero(id):
     if not current_user.Tipo == 'admin':

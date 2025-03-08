@@ -15,11 +15,11 @@
             <nav class="flex items-center space-x-4">
                 {% if current_user.is_authenticated %}
                     <a href="{{ url_for('main.index') }}" class="px-4 hover:underline">Home</a>
-                    <a href="{{ url_for('listar_vinis') }}" class="px-4 hover:underline">Vinis</a>
-                    <a href="{{ url_for('listar_generos') }}" class="px-4 hover:underline">Gêneros</a>
-                    <a href="{{ url_for('listar_clientes') }}" class="px-4 hover:underline">Clientes</a>
-                    <a href="{{ url_for('listar_vendas') }}" class="px-4 hover:underline">Vendas</a>
-                    <form action="{{ url_for('pesquisar') }}" method="GET" class="flex items-center text-black">
+                    <a href="{{ url_for('vinis.listar_vinis') }}" class="px-4 hover:underline">Vinis</a>
+                    <a href="{{ url_for('generos.listar_generos') }}" class="px-4 hover:underline">Gêneros</a>
+                    <a href="{{ url_for('clientes.listar_clientes') }}" class="px-4 hover:underline">Clientes</a>
+                    <a href="{{ url_for('vendas.listar_vendas') }}" class="px-4 hover:underline">Vendas</a>
+                    <form action="{{ url_for('pesquisa.pesquisar') }}" method="GET" class="flex items-center text-black">
                         <input
                             type="text"
                             name="search"
@@ -30,6 +30,9 @@
                         <button type="submit" class="bg-blue-500 text-white p-2 rounded-r">
                             <i class="fas fa-search"></i> 
                         </button>
+                    </form>
+                    <form action="{{ url_for('usuario.logout') }}" method="POST">
+                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Logout</button>
                     </form>
                 {% else %}
                     <a href="{{ url_for('usuario.login') }}" class="px-4 hover:underline">Login</a>
