@@ -6,18 +6,23 @@ class Venda(db.Model):
 
     IDVenda = db.Column(db.Integer, primary_key=True, autoincrement=True)  
     DataVenda = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)  
-    ValorTotal = db.Column(db.Numeric(10, 2), nullable=False)  
+    ValorTotal = db.Column(db.Numeric(10, 2), nullable=False, default=0.00)  
     IDCliente = db.Column(db.Integer, db.ForeignKey('Cliente.IDCliente'), nullable=True)  
 
-    itens_venda = db.relationship('ItensVenda', backref='venda', lazy=True)
+    itens_venda = db.relationship('ItensVenda', backref='venda', lazy=True, cascade='all, delete-orphan')
+
     def __repr__(self):
         return f"<Venda {self.IDVenda} - {self.DataVenda} - R$ {self.ValorTotal}>"
+
+    def atualizar_valor_total(self):
+        self.ValorTotal = sum(item.Quantidade * item.PrecoUnitario for item in self.itens_venda)
+        db.session.commit()
 
 class ItensVenda(db.Model):
     __tablename__ = 'ItensVenda'
 
     IDItensVenda = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    IDVenda = db.Column(db.Integer, db.ForeignKey('Venda.IDVenda'), nullable=False)  # Adicionando chave estrangeira para Venda
+    IDVenda = db.Column(db.Integer, db.ForeignKey('Venda.IDVenda'), nullable=False)
     IDVinil = db.Column(db.Integer, db.ForeignKey('Vinil.IDVinil'), nullable=False)
     Quantidade = db.Column(db.Integer, nullable=False)
     PrecoUnitario = db.Column(db.Numeric(10, 2), nullable=False)

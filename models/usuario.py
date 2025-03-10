@@ -8,7 +8,7 @@ class Usuario(db.Model, UserMixin):
     Nome = db.Column(db.String(255), nullable=False)
     Email = db.Column(db.String(255), nullable=False, unique=True)
     Senha = db.Column(db.String(255), nullable=False)
-    Tipo = db.Column(db.String(10), nullable=False, default='comum')  # 'admin' ou 'comum'
+    Tipo = db.Column(db.String(10), nullable=False, default='comum') 
 
     def get_id(self):
         return self.IDUsuario

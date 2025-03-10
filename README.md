@@ -1,1 +1,0 @@
-# sistema_de_gestao_vendas

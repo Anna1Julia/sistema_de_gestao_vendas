@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto mt-4 p-6">
+    <h2 class="text-2xl font-semibold mb-4">Acessos</h2>
+    
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+        <thead>
+            <tr class="bg-gray-100">
+                <th class="py-2 px-4 text-left text-sm font-medium text-gray-600">Usuário</th>
+                <th class="py-2 px-4 text-left text-sm font-medium text-gray-600">Email</th>
+                <th class="py-2 px-4 text-left text-sm font-medium text-gray-600">Data e Hora</th>
+                <th class="py-2 px-4 text-left text-sm font-medium text-gray-600">Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr class="border-t border-gray-200 hover:bg-gray-50">
+                <td class="py-2 px-4 text-sm text-gray-700">{{ log.usuario.Nome if log.usuario else 'Desconhecido' }}</td>
+                <td class="py-2 px-4 text-sm text-gray-700">{{ log.Email }}</td>
+                <td class="py-2 px-4 text-sm text-gray-700">{{ log.DataHora.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                <td class="py-2 px-4 text-sm text-gray-700">{{ log.Tipo }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

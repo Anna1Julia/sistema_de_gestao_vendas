@@ -19,6 +19,16 @@
                     <a href="{{ url_for('generos.listar_generos') }}" class="px-4 hover:underline">Gêneros</a>
                     <a href="{{ url_for('clientes.listar_clientes') }}" class="px-4 hover:underline">Clientes</a>
                     <a href="{{ url_for('vendas.listar_vendas') }}" class="px-4 hover:underline">Vendas</a>
+                    {% if current_user.is_authenticated and current_user.is_admin() %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('usuario.log_acessos') }}">Acessos</a>
+                        </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated and current_user.is_admin() %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('vendas.log_vendas') }}">Vendas</a>
+                        </li>
+                    {% endif %}
                     <form action="{{ url_for('pesquisa.pesquisar') }}" method="GET" class="flex items-center text-black">
                         <input
                             type="text"
@@ -31,10 +41,10 @@
                             <i class="fas fa-search"></i> 
                         </button>
                     </form>
-                    <form action="{{ url_for('usuario.logout') }}" method="POST">
-                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Logout</button>
+                    <form id="logout-form" action="{{ url_for('usuario.logout') }}" method="post" style="display: inline;" onsubmit="return confirmLogout();">
+                        <button type="submit" class="btn btn-danger">Sair</button>
                     </form>
-                {% else %}
+                    {% else %}
                     <a href="{{ url_for('usuario.login') }}" class="px-4 hover:underline">Login</a>
                     <a href="{{ url_for('usuario.register') }}" class="px-4 hover:underline">Registro</a>
                 {% endif %}
@@ -64,4 +74,11 @@
         &copy; {{ year }} TamTamTam - Todos os direitos reservados.
     </footer>
 </body>
+
+<script>
+    function confirmLogout() {
+        return confirm("Tem certeza de que deseja sair?");
+    }
+</script>
+
 </html>

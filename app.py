@@ -23,7 +23,7 @@ def load_user(user_id):
 def unauthorized():
     return redirect(url_for('usuario.login'))
 
-app.register_blueprint(vinis_bp, url_prefix='/')
+app.register_blueprint(vinis_bp, url_prefix='/vinis')
 app.register_blueprint(clientes_bp, url_prefix='/clientes')
 app.register_blueprint(vendas_bp, url_prefix='/vendas')
 app.register_blueprint(generos_bp, url_prefix='/generos')

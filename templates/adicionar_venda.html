@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
+
 {% block title %}Adicionar Venda{% endblock %}
+
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Adicionar Nova Venda</h2>
 <form method="post" action="{{ url_for('vendas.adicionar_venda') }}" class="bg-white shadow rounded-lg p-4">
     <div class="mb-4">
         <label for="cliente_id" class="block mb-2 font-medium">Cliente:</label>
-        <select id="cliente_id" name="cliente_id" required class="w-full border px-3 py-2 rounded">
+        <select id="cliente_id" name="IDCliente" required class="w-full border px-3 py-2 rounded">
             {% for cliente in clientes %}
                 <option value="{{ cliente.IDCliente }}">{{ cliente.Nome }}</option>
             {% endfor %}
-        </select>     
-    </div>
+        </select>
+    </div>    
 
     <div class="mb-4">
-        <label for="data_venda" class="block mb-2 font-medium">Data da Venda:</label>
         <input type="date" id="data_venda" name="data_venda" required class="w-full border px-3 py-2 rounded" />
     </div>
 
@@ -21,12 +22,14 @@
         <label for="vinis" class="block mb-2 font-medium">Vinil(s):</label>
         <div class="vinil-item mb-4 flex items-center" id="vinil-1">
             <select name="vinis[]" required class="w-full border px-3 py-2 rounded vinil-select">
-                <option value="">Selecione um vinil</option>
+                <option value="1" disabled selected>Selecione um vinil</option> <!-- Valor inválido -->
                 {% for vinil in vinis %}
-                    <option value="{{ vinil.id }}" data-estoque="{{ vinil.Estoque }}">{{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})</option>
+                    <option value="{{ vinil.id }}" data-estoque="{{ vinil.Estoque }}">
+                        {{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})
+                    </option>
                 {% endfor %}
-            </select>
-            <input type="number" name="quantidades[]" min="1" max="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="1">
+            </select>            
+                <input type="number" name="quantidades[]" min="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="1">
             <button type="button" class="ml-2 text-red-600 remove-vinil">Remover</button>
         </div>
     </div>
@@ -49,12 +52,12 @@
         
         vinilContainer.innerHTML = `
             <select name="vinis[]" required class="w-full border px-3 py-2 rounded vinil-select">
-                <option value="">Selecione um vinil</option>
+                <option value="" disabled selected>Selecione um vinil</option> <!-- Alteração aqui -->
                 {% for vinil in vinis %}
                     <option value="{{ vinil.id }}" data-estoque="{{ vinil.Estoque }}">{{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})</option>
                 {% endfor %}
             </select>
-            <input type="number" name="quantidades[]" min="1" max="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="${vinilCount}">
+            <input type="number" name="quantidades[]" min="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="${vinilCount}">
             <button type="button" class="ml-2 text-red-600 remove-vinil">Remover</button>
         `;
         
@@ -73,10 +76,28 @@
             const vinilSelect = event.target;
             const estoque = vinilSelect.options[vinilSelect.selectedIndex].getAttribute('data-estoque');
             const quantityInput = vinilSelect.closest('.vinil-item').querySelector('.quantity-input');
+            
             quantityInput.setAttribute('max', estoque);
             quantityInput.value = 1;
+            
+            if (!quantityInput.value || quantityInput.value <= 0) {
+                quantityInput.setCustomValidity('Por favor, insira uma quantidade válida.');
+            } else {
+                quantityInput.setCustomValidity('');
+            }
         }
     });
-</script>
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const vinilSelects = document.querySelectorAll('.vinil-select');
+        for (let vinilSelect of vinilSelects) {
+            if (vinilSelect.value === "-1") {
+                event.preventDefault();
+                alert('Por favor, selecione um vinil válido para todos os campos.');
+                return;
+            }
+        }
+    });    
+    </script>
 
 {% endblock %}

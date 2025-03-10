@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
+
 {% block title %}Vendas{% endblock %}
+
 {% block content %}
 <h2 class="text-2xl font-bold mb-4">Listagem de Vendas</h2>
 
-<form action="{{ url_for('vendas.adicionar_venda') }}" method="post" class="mb-4">
+<form action="{{ url_for('vendas.adicionar_venda') }}" method="get" class="mb-4">
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow flex items-center hover:bg-blue-700 transition">
         <span class="mr-2">Adicionar Venda</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -22,15 +24,6 @@
 
     <select name="periodo" class="border px-2 py-1 rounded shadow">
         <option value="">Selecione um Período</option>
-        <option value="7">Últimos 7 Dias</option>
-        <option value="30">Últimos 30 Dias</option>
-        <option value="60">Últimos 60 Dias</option>
-        <option value="90">Últimos 90 Dias</option>
-    </select>
-
-
-    <select name="top_vendidos" class="border px-2 py-1 rounded shadow">
-        <option value="">Top 10 Mais Vendidos</option>
         <option value="7">Últimos 7 Dias</option>
         <option value="30">Últimos 30 Dias</option>
         <option value="60">Últimos 60 Dias</option>
@@ -74,11 +67,11 @@
                 <td class="px-4 py-2">{{ venda.DataVenda.strftime('%d/%m/%Y') }}</td>
                 <td class="px-4 py-2">R$ {{ venda.ValorTotal | round(2) }}</td>
                 <td class="px-4 py-2 flex space-x-2">
-                    <a href="{{ url_for('editar_venda', id=venda.IDVenda) }}" class="bg-yellow-600 text-white px-2 py-1 rounded shadow hover:bg-yellow-700 transition">
+                    <a href="{{ url_for('vendas.editar_venda', id=venda.IDVenda) }}" class="bg-yellow-600 text-white px-2 py-1 rounded shadow hover:bg-yellow-700 transition">
                         Editar
                     </a>
 
-                    <form action="{{ url_for('deletar_venda', id=venda.IDVenda) }}" method="post">
+                    <form action="{{ url_for('vendas.deletar_venda', id=venda.IDVenda) }}" method="post">
                         <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded shadow hover:bg-red-700 transition" onclick="return confirm('Tem certeza que deseja excluir esta venda?')">Deletar</button>
                     </form>
                 </td>

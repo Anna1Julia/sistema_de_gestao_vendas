@@ -1,127 +1,128 @@
-from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user  
+from flask_login import login_required, current_user
 from models import db
 from models.venda import Venda, ItensVenda
-from models.cliente import Cliente
 from models.vinil import Vinil
+from models.cliente import Cliente
+from models.log_venda import LogVenda
 
 vendas_bp = Blueprint('vendas', __name__)
 
-@vendas_bp.route('/vendas', methods=['GET'])
+@vendas_bp.route('/vendas')
 @login_required
 def listar_vendas():
-    cliente_id = request.args.get('cliente_id')
-    periodo = request.args.get('periodo')
-    
-    if periodo:
-        today = datetime.today()
-        if periodo == '7':
-            data_inicio = today - timedelta(days=7)
-        elif periodo == '30':
-            data_inicio = today - timedelta(days=30)
-        elif periodo == '60':
-            data_inicio = today - timedelta(days=60)
-        elif periodo == '90':
-            data_inicio = today - timedelta(days=90)
-        else:
-            data_inicio = None
-    else:
-        data_inicio = None
-
-    query = Venda.query
-
-    if cliente_id:
-        query = query.filter(Venda.cliente_id == cliente_id)
-
-    if data_inicio:
-        query = query.filter(Venda.DataVenda >= data_inicio)
-
-    vendas = query.all()
+    vendas = Venda.query.all()
     clientes = Cliente.query.all()
-
     return render_template('vendas.html', vendas=vendas, clientes=clientes)
 
 @vendas_bp.route('/venda/adicionar', methods=['GET', 'POST'])
 @login_required
 def adicionar_venda():
-    if not current_user.is_admin: 
-        flash('Você não tem permissão para adicionar vendas.', 'error')
-        return redirect(url_for('vendas.listar_vendas'))
-    
     if request.method == 'POST':
         cliente_id = request.form.get('IDCliente')
-        
-        if not cliente_id:
-            flash('Cliente não informado.', 'error')
+        data_venda = request.form.get('data_venda')
+
+        if not cliente_id or not data_venda:
+            flash("Preencha todos os campos obrigatórios", 'error')
             return redirect(url_for('vendas.adicionar_venda'))
-        
-        try:
-            cliente_id = int(cliente_id)
-        except ValueError:
-            flash('ID do cliente inválido.', 'error')
-            return redirect(url_for('vendas.adicionar_venda'))
-        
+
         cliente = Cliente.query.get(cliente_id)
         if not cliente:
-            flash('Cliente não encontrado.', 'error')
-            return redirect(url_for('vendas.adicionar_venda'))
-        
-        vinis_selecionados = request.form.getlist('vinis[]')
-        quantidades = request.form.getlist('quantidades[]')
-        data_venda_str = request.form['data_venda']
-        
-        try:
-            data_venda = datetime.strptime(data_venda_str, '%Y-%m-%d')
-        except ValueError:
-            flash('Data inválida. Por favor, insira uma data válida.', 'error')
+            flash("Cliente não encontrado", 'error')
             return redirect(url_for('vendas.adicionar_venda'))
 
-        nova_venda = Venda(IDCliente=cliente_id, ValorTotal=0, DataVenda=data_venda)
-        db.session.add(nova_venda)
-        db.session.flush()
-
+        venda = Venda(IDCliente=cliente_id, DataVenda=data_venda)
         valor_total = 0
-        for vinil_id, quantidade in zip(vinis_selecionados, quantidades):
-            vinil = Vinil.query.get(vinil_id)
-            if vinil:
-                try:
-                    quantidade = int(quantidade)
-                except ValueError:
-                    flash(f"Quantidade inválida para o vinil '{vinil.Titulo}'.", 'error')
+
+        vinis = request.form.getlist('vinis[]')
+        quantidades = request.form.getlist('quantidades[]')
+
+        if len(vinis) != len(quantidades) or len(vinis) == 0:
+            flash("Selecione pelo menos um vinil com quantidade válida", 'error')
+            return redirect(url_for('vendas.adicionar_venda'))
+
+        for vinil_id, quantidade in zip(vinis, quantidades):
+            if not vinil_id or not quantidade:
+                flash("Preencha todos os campos de vinil e quantidade", 'error')
+                return redirect(url_for('vendas.adicionar_venda'))
+
+            try:
+                vinil = Vinil.query.get(int(vinil_id))
+                quantidade_int = int(quantidade)
+
+                if vinil is None:
+                    flash(f"Vinil com ID {vinil_id} não encontrado", 'error')
                     db.session.rollback()
                     return redirect(url_for('vendas.adicionar_venda'))
-                
-                if quantidade > vinil.Estoque:
-                    flash(f"Quantidade solicitada para '{vinil.Titulo}' excede o estoque disponível!", 'error')
-                    db.session.rollback()
-                    return redirect(url_for('vendas.adicionar_venda'))
-                
-                preco_unitario = vinil.Preco or 0 
-                if preco_unitario == 0:
-                    flash(f"O vinil '{vinil.Titulo}' está com preço inválido!", 'error')
+
+                if vinil.Estoque < quantidade_int:
+                    flash(f"Estoque insuficiente para {vinil.Titulo} (Estoque: {vinil.Estoque})", 'error')
                     db.session.rollback()
                     return redirect(url_for('vendas.adicionar_venda'))
 
                 item_venda = ItensVenda(
-                    IDVenda=nova_venda.IDVenda,
-                    IDVinil=vinil_id,
-                    Quantidade=quantidade,
-                    PrecoUnitario=preco_unitario
+                    IDVinil=vinil.IDVinil,
+                    Quantidade=quantidade_int,
+                    PrecoUnitario=vinil.Preco
                 )
-                db.session.add(item_venda)
-                valor_total += preco_unitario * quantidade
-                vinil.Estoque -= quantidade
+                venda.itens_venda.append(item_venda)
 
-        nova_venda.ValorTotal = valor_total
+                vinil.Estoque -= quantidade_int
+                db.session.add(vinil)
+
+                valor_total += vinil.Preco * quantidade_int
+
+            except ValueError:
+                flash("Valores inválidos no formulário", 'error')
+                db.session.rollback()
+                return redirect(url_for('vendas.adicionar_venda'))
+
+        venda.ValorTotal = valor_total
+        db.session.add(venda)
         db.session.commit()
 
-        flash('Venda adicionada com sucesso!', 'success')
+        log_venda = LogVenda(IDUsuario=current_user.IDUsuario, IDVenda=venda.IDVenda, Tipo='criação')
+        db.session.add(log_venda)
+        db.session.commit()
+
+        flash("Venda registrada com sucesso!", 'success')
         return redirect(url_for('vendas.listar_vendas'))
 
-    vinis = Vinil.query.all()
     clientes = Cliente.query.all()
+    vinis = Vinil.query.all()
     return render_template('adicionar_venda.html', clientes=clientes, vinis=vinis)
+
+@vendas_bp.route('/venda/editar/<int:id>', methods=['POST'])
+@login_required
+def editar_venda(id):
+    venda = Venda.query.get(id)
+    if not venda:
+        flash('Venda não encontrada!', 'error')
+        return redirect(url_for('vendas.listar_vendas'))
+
+    for item in request.form.getlist('itens'):
+        item_existente = ItensVenda.query.filter_by(IDVenda=venda.IDVenda, IDVinil=item['IDVinil']).first()
+        if item_existente:
+            item_existente.Quantidade += item['quantidade']
+        else:
+            vinil = Vinil.query.get(item['IDVinil'])
+            novo_item = ItensVenda(
+                IDVinil=vinil.IDVinil,
+                Quantidade=item['quantidade'],
+                PrecoUnitario=vinil.Preco
+            )
+            venda.itens_venda.append(novo_item)
+
+    venda.atualizar_valor_total()
+
+    db.session.commit()
+
+    log_venda = LogVenda(IDUsuario=current_user.IDUsuario, IDVenda=venda.IDVenda, Tipo='edição')
+    db.session.add(log_venda)
+    db.session.commit()
+
+    flash('Venda editada com sucesso!', 'success')
+    return redirect(url_for('vendas.listar_vendas'))
 
 @vendas_bp.route('/venda/deletar/<int:id>', methods=['POST'])
 @login_required
@@ -129,7 +130,7 @@ def deletar_venda(id):
     if not current_user.is_admin:
         flash('Você não tem permissão para deletar vendas.', 'error')
         return redirect(url_for('vendas.listar_vendas'))
-    
+
     venda = Venda.query.get(id)
     if not venda:
         flash('Venda não encontrada!', 'error')
@@ -144,5 +145,19 @@ def deletar_venda(id):
     db.session.delete(venda)
     db.session.commit()
 
+    log_venda = LogVenda(IDUsuario=current_user.IDUsuario, IDVenda=venda.IDVenda, Tipo='deletação')
+    db.session.add(log_venda)
+    db.session.commit()
+
     flash('Venda deletada com sucesso!', 'success')
     return redirect(url_for('vendas.listar_vendas'))
+
+@vendas_bp.route('/log_vendas')
+@login_required
+def log_vendas():
+    if not current_user.is_admin:
+        flash('Acesso negado.', 'danger')
+        return redirect(url_for('main.index'))
+
+    logs = LogVenda.query.order_by(LogVenda.DataHora.desc()).all()
+    return render_template('log_vendas.html', logs=logs)

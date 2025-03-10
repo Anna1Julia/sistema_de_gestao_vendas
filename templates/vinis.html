@@ -34,6 +34,36 @@
     </button>
 </form>
 
+<form method="get" class="mb-4 flex space-x-2">
+    <label class="flex items-center">
+        <input type="checkbox" name="top_vendidos" value="1" {% if request.args.get('top_vendidos') == '1' %}checked{% endif %} class="mr-2">
+        Mostrar Top 10 Mais Vendidos
+    </label>
+    
+    <label for="periodo" class="flex items-center">
+        Período:
+        <select name="periodo" id="periodo" class="border px-2 py-1 rounded shadow">
+            <option value="">Selecione o Período</option>
+            <option value="7" {% if request.args.get('periodo') == '7' %}selected{% endif %}>Últimos 7 Dias</option>
+            <option value="30" {% if request.args.get('periodo') == '30' %}selected{% endif %}>Últimos 30 Dias</option>
+            <option value="60" {% if request.args.get('periodo') == '60' %}selected{% endif %}>Últimos 60 Dias</option>
+            <option value="90" {% if request.args.get('periodo') == '90' %}selected{% endif %}>Últimos 90 Dias</option>
+        </select>
+    </label>
+    
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
+        Filtrar
+    </button>
+</form>
+
+{% if mensagem_vendas %}
+    <div class="alert alert-warning mb-4 p-4 text-yellow-700 bg-yellow-100 border border-yellow-500 rounded">
+        {{ mensagem_vendas }}
+    </div>
+{% endif %}
+
+<h3 class="text-xl font-bold mb-4">Top 10 Mais Vendidos</h3>
+
 <div class="overflow-x-auto">
     <table class="table-auto w-full bg-white rounded shadow">
         <thead class="bg-gray-200">
