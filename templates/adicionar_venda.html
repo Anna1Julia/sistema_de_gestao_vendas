@@ -20,16 +20,16 @@
 
     <div class="mb-4" id="vinis-container">
         <label for="vinis" class="block mb-2 font-medium">Vinil(s):</label>
-        <div class="vinil-item mb-4 flex items-center" id="vinil-1">
+        <div class="vinil-item mb-4 flex items-center">
             <select name="vinis[]" required class="w-full border px-3 py-2 rounded vinil-select">
-                <option value="1" disabled selected>Selecione um vinil</option> <!-- Valor inválido -->
+                <option value="" disabled selected>Selecione um vinil</option>
                 {% for vinil in vinis %}
-                    <option value="{{ vinil.id }}" data-estoque="{{ vinil.Estoque }}">
+                    <option value="{{ vinil.IDVinil }}" data-estoque="{{ vinil.Estoque }}">
                         {{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})
                     </option>
                 {% endfor %}
             </select>            
-                <input type="number" name="quantidades[]" min="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="1">
+            <input type="number" name="quantidades[]" min="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input">
             <button type="button" class="ml-2 text-red-600 remove-vinil">Remover</button>
         </div>
     </div>
@@ -48,16 +48,15 @@
         
         const vinilContainer = document.createElement('div');
         vinilContainer.classList.add('vinil-item', 'mb-4', 'flex', 'items-center');
-        vinilContainer.id = `vinil-${vinilCount}`;
         
         vinilContainer.innerHTML = `
             <select name="vinis[]" required class="w-full border px-3 py-2 rounded vinil-select">
-                <option value="" disabled selected>Selecione um vinil</option> <!-- Alteração aqui -->
+                <option value="" disabled selected>Selecione um vinil</option>
                 {% for vinil in vinis %}
-                    <option value="{{ vinil.id }}" data-estoque="{{ vinil.Estoque }}">{{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})</option>
+                    <option value="{{ vinil.IDVinil }}" data-estoque="{{ vinil.Estoque }}">{{ vinil.Titulo }} - R$ {{ vinil.Preco }} (Estoque: {{ vinil.Estoque }})</option>
                 {% endfor %}
             </select>
-            <input type="number" name="quantidades[]" min="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input" data-vinil-id="${vinilCount}">
+            <input type="number" name="quantidades[]" min="1" placeholder="Quantidade" required class="w-20 border px-3 py-2 rounded quantity-input">
             <button type="button" class="ml-2 text-red-600 remove-vinil">Remover</button>
         `;
         
@@ -66,8 +65,7 @@
 
     document.addEventListener('click', function(event) {
         if (event.target && event.target.classList.contains('remove-vinil')) {
-            const vinilItem = event.target.closest('.vinil-item');
-            vinilItem.remove();
+            event.target.closest('.vinil-item').remove();
         }
     });
 
@@ -79,25 +77,19 @@
             
             quantityInput.setAttribute('max', estoque);
             quantityInput.value = 1;
-            
-            if (!quantityInput.value || quantityInput.value <= 0) {
-                quantityInput.setCustomValidity('Por favor, insira uma quantidade válida.');
-            } else {
-                quantityInput.setCustomValidity('');
-            }
         }
     });
 
     document.querySelector('form').addEventListener('submit', function(event) {
         const vinilSelects = document.querySelectorAll('.vinil-select');
         for (let vinilSelect of vinilSelects) {
-            if (vinilSelect.value === "-1") {
+            if (vinilSelect.value === "") {
                 event.preventDefault();
                 alert('Por favor, selecione um vinil válido para todos os campos.');
                 return;
             }
         }
     });    
-    </script>
+</script>
 
 {% endblock %}

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from models import db
-from models.venda import Venda
+from models.venda import ItensVenda, Venda
 from models.vinil import Vinil
 from models.genero import GeneroMusical
 from datetime import datetime, timedelta
@@ -14,7 +14,8 @@ def listar_vinis():
     preco_min = request.args.get('preco_min', type=float)
     preco_max = request.args.get('preco_max', type=float)
     ordenar = request.args.get('ordenar', 'titulo')
-    top_vendidos = request.args.get('top_vendidos', type=int) 
+    top_vendidos = request.args.get('top_vendidos', type=int)
+    nao_vendidos = request.args.get('nao_vendidos', type=int)  # Novo filtro
     periodo = request.args.get('periodo', type=int)
 
     query = Vinil.query
@@ -32,47 +33,44 @@ def listar_vinis():
     elif ordenar == 'ano':
         query = query.order_by(Vinil.AnoLancamento)
 
-    vinis = query.all()
-    generos = GeneroMusical.query.all()
-
     if periodo:
         hoje = datetime.today()
-        if periodo == 7:
-            inicio_periodo = hoje - timedelta(days=7)
-        elif periodo == 30:
-            inicio_periodo = hoje - timedelta(days=30)
-        elif periodo == 60:
-            inicio_periodo = hoje - timedelta(days=60)
-        elif periodo == 90:
-            inicio_periodo = hoje - timedelta(days=90)
-        else:
-            inicio_periodo = None
-
-        vendas = Venda.query.filter(Venda.DataVenda >= inicio_periodo).all() if inicio_periodo else Venda.query.all()
+        inicio_periodo = hoje - timedelta(days=periodo)
+        vendas = Venda.query.filter(Venda.DataVenda >= inicio_periodo).all()
     else:
         vendas = Venda.query.all()
 
-    if not vendas:
-        mensagem_vendas = "Não há vendas no período selecionado."
-    else:
-        mensagem_vendas = None
+    mensagem_vendas = "Não há vendas no período selecionado." if not vendas else None
 
     vinis_mais_vendidos = []
     if top_vendidos:
-        vinis_mais_vendidos_dict = {}
+        vinis_vendidos_dict = {}
 
         for venda in vendas:
             for item in venda.itens_venda:
-                vinil_id = item.vinil.IDVinil
-                if vinil_id in vinis_mais_vendidos_dict:
-                    vinis_mais_vendidos_dict[vinil_id] += item.Quantidade
+                vinil_id = item.IDVinil
+                if vinil_id in vinis_vendidos_dict:
+                    vinis_vendidos_dict[vinil_id] += item.Quantidade
                 else:
-                    vinis_mais_vendidos_dict[vinil_id] = item.Quantidade
+                    vinis_vendidos_dict[vinil_id] = item.Quantidade
 
-        top_10_vinis = sorted(vinis_mais_vendidos_dict.items(), key=lambda x: x[1], reverse=True)[:10]
+        top_10_vinis = sorted(vinis_vendidos_dict.items(), key=lambda x: x[1], reverse=True)[:10]
         vinis_mais_vendidos = [Vinil.query.get(vinil_id) for vinil_id, _ in top_10_vinis]
 
-    return render_template('vinis.html', vinis=vinis, generos=generos, vinis_mais_vendidos=vinis_mais_vendidos, mensagem_vendas=mensagem_vendas)
+    if nao_vendidos:
+        vendidos = db.session.query(ItensVenda.IDVinil).distinct()
+        query = query.filter(~Vinil.IDVinil.in_(vendidos))
+
+    vinis = vinis_mais_vendidos if top_vendidos else query.all()
+    generos = GeneroMusical.query.all()
+
+    return render_template(
+        'vinis.html',
+        vinis=vinis,
+        generos=generos,
+        vinis_mais_vendidos=vinis_mais_vendidos,
+        mensagem_vendas=mensagem_vendas
+    )
 
 @vinis_bp.route('/adicionar_vinil', methods=['GET', 'POST'])
 @login_required

@@ -39,7 +39,12 @@
         <input type="checkbox" name="top_vendidos" value="1" {% if request.args.get('top_vendidos') == '1' %}checked{% endif %} class="mr-2">
         Mostrar Top 10 Mais Vendidos
     </label>
-    
+
+    <label class="flex items-center">
+        <input type="checkbox" name="nao_vendidos" value="1" {% if request.args.get('nao_vendidos') == '1' %}checked{% endif %} class="mr-2">
+        Mostrar Vinis Não Vendidos
+    </label>
+
     <label for="periodo" class="flex items-center">
         Período:
         <select name="periodo" id="periodo" class="border px-2 py-1 rounded shadow">

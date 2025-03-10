@@ -18,7 +18,9 @@
     <select name="IDCliente" class="border px-2 py-1 rounded shadow">
         <option value="">Selecione um Cliente</option>
         {% for cliente in clientes %}
-        <option value="{{ cliente.IDCliente }}">{{ cliente.Nome }}</option>
+            <option value="{{ cliente.IDCliente }}" {% if cliente.IDCliente == request.args.get('IDCliente') %} selected {% endif %}>
+                {{ cliente.Nome }}
+            </option>
         {% endfor %}
     </select>       
 
@@ -30,18 +32,9 @@
         <option value="90">Últimos 90 Dias</option>
     </select>
     
-    <select name="nao_vendidos" class="border px-2 py-1 rounded shadow">
-        <option value="">Não Vendidos</option>
-        <option value="7">Últimos 7 Dias</option>
-        <option value="30">Últimos 30 Dias</option>
-        <option value="60">Últimos 60 Dias</option>
-        <option value="90">Últimos 90 Dias</option>
-    </select>
-    
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
         Filtrar
     </button>
-
 </form>
 
 <div class="overflow-x-auto">

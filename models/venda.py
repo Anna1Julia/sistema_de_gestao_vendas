@@ -7,7 +7,8 @@ class Venda(db.Model):
     IDVenda = db.Column(db.Integer, primary_key=True, autoincrement=True)  
     DataVenda = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)  
     ValorTotal = db.Column(db.Numeric(10, 2), nullable=False, default=0.00)  
-    IDCliente = db.Column(db.Integer, db.ForeignKey('Cliente.IDCliente'), nullable=True)  
+    IDCliente = db.Column(db.Integer, db.ForeignKey('Cliente.IDCliente'), nullable=True)
+    IDUsuario = db.Column(db.Integer, db.ForeignKey('Usuario.IDUsuario'), nullable=False)
 
     itens_venda = db.relationship('ItensVenda', backref='venda', lazy=True, cascade='all, delete-orphan')
 
